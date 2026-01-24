@@ -2,16 +2,19 @@ import { useState, useEffect } from "react";
 import { Search, Users, Eye } from "lucide-react";
 import type { Membre } from "../../utils/cardHelpers";
 import { supabase } from "../../services/supabase";
+import { ExportPanel } from "./ExportPanel";
 
 interface MembersListProps {
   onViewCard: (membre: Membre, cardNum: number) => void;
   onBack: () => void;
+  defaultExport?: boolean; // ✅ nouvelle prop optionnelle
 }
 
-export function MembersList({ onViewCard, onBack }: MembersListProps) {
+export function MembersList({ onViewCard, onBack, defaultExport = false }: MembersListProps) {
   const [membres, setMembres] = useState<Membre[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
+  const [showExport, setShowExport] = useState(defaultExport); // ✅ initialisation avec la prop
 
   useEffect(() => {
     loadMembres();
@@ -69,54 +72,75 @@ export function MembersList({ onViewCard, onBack }: MembersListProps) {
                 {membres.length} membre(s) enregistré(s)
               </p>
             </div>
-            <button
-              onClick={onBack}
-              style={{
-                padding: "10px 20px",
-                backgroundColor: "#64748b",
-                color: "white",
-                border: "none",
-                borderRadius: 8,
-                cursor: "pointer",
-                fontSize: 14,
-                fontWeight: 500,
-              }}
-            >
-              Retour
-            </button>
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                onClick={() => setShowExport(!showExport)}
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: showExport ? "#0f172a" : "#2563eb",
+                  color: "white",
+                  border: "none",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  fontSize: 14,
+                  fontWeight: 500,
+                }}
+              >
+                {showExport ? "Fermer l'export" : "Exporter les données"}
+              </button>
+              <button
+                onClick={onBack}
+                style={{
+                  padding: "10px 20px",
+                  backgroundColor: "#64748b",
+                  color: "white",
+                  border: "none",
+                  borderRadius: 8,
+                  cursor: "pointer",
+                  fontSize: 14,
+                  fontWeight: 500,
+                }}
+              >
+                Retour
+              </button>
+            </div>
           </div>
 
           {/* Search */}
-          <div style={{ position: "relative" }}>
-            <Search
-              size={20}
-              style={{
-                position: "absolute",
-                left: 12,
-                top: "50%",
-                transform: "translateY(-50%)",
-                color: "#94a3b8",
-              }}
-            />
-            <input
-              type="text"
-              placeholder="Rechercher par nom, prénom ou numéro..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "12px 12px 12px 40px",
-                border: "2px solid #e2e8f0",
-                borderRadius: 8,
-                fontSize: 14,
-                boxSizing: "border-box",
-              }}
-            />
-          </div>
+          {!showExport && (
+            <div style={{ position: "relative" }}>
+              <Search
+                size={20}
+                style={{
+                  position: "absolute",
+                  left: 12,
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  color: "#94a3b8",
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Rechercher par nom, prénom ou numéro..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                style={{
+                  width: "100%",
+                  padding: "12px 12px 12px 40px",
+                  border: "2px solid #e2e8f0",
+                  borderRadius: 8,
+                  fontSize: 14,
+                  boxSizing: "border-box",
+                }}
+              />
+            </div>
+          )}
         </div>
 
         {/* Content */}
-        {loading ? (
+        {showExport ? (
+          <ExportPanel membres={membres} />
+        ) : loading ? (
           <div style={{ textAlign: "center", padding: 40, color: "#64748b" }}>
             Chargement...
           </div>
@@ -183,9 +207,6 @@ export function MembersList({ onViewCard, onBack }: MembersListProps) {
                   <p style={{ margin: "0 0 8px", fontSize: 14, color: "#475569" }}>
                     <strong>Catégorie:</strong> {membre.categorie}
                   </p>
-                  {/*<p style={{ margin: 0, fontSize: 14, color: "#475569" }}>
-                    <strong>ID:</strong> {membre.id}
-                  </p>*/}
                 </div>
                 <button
                   onClick={() => onViewCard(membre, filteredMembres.length - index)}

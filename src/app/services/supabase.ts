@@ -1,10 +1,20 @@
-
-
 import { createClient } from "@supabase/supabase-js";
+import { CATEGORY_PRICES, Membre as BaseMembre } from "../utils/cardHelpers";
 
 // Récupération des variables d'environnement
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// ✅ Création du client Supabase
+export const supabase = createClient(
+  supabaseUrl,
+  supabaseAnonKey
+);
+
+// ✅ Extension du type Membre avec le champ price
+export interface Membre extends BaseMembre {
+  price: number;
+}
 
 // ✅ Authentification
 export const authService = {
@@ -27,8 +37,21 @@ export const authService = {
 
 // ✅ Table "membres"
 export const membresService = {
-  insert: async (data: any) => {
-    return await supabase.from("membres").insert(data).select().single();
+  insert: async (data: Omit<Membre, "id" | "price"> & { price?: number }) => {
+    let price = 0;
+
+    if (typeof CATEGORY_PRICES[data.categorie] === "number") {
+      price = CATEGORY_PRICES[data.categorie] as number;
+    } else {
+      // Si la catégorie est Premium/Diamond/VVIP, on prend la valeur saisie
+      price = data.price ?? 0;
+    }
+
+    return await supabase
+      .from("membres")
+      .insert({ ...data, price })
+      .select()
+      .single();
   },
 
   selectLast: async () => {
@@ -59,10 +82,3 @@ export const storageService = {
     return publicUrl.publicUrl;
   },
 };
-
-
-// ✅ Création du client Supabase
-export const supabase = createClient(
-  supabaseUrl,
-  supabaseAnonKey
-);

@@ -1,6 +1,43 @@
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 
+/**
+ * Prix par catégorie
+ * ⚠️ Pour les catégories avec plages de prix ou valeurs non numériques,
+ * on utilise des chaînes de caractères pour éviter les erreurs de typage.
+ */
+export const CATEGORY_PRICES: Record<string, string | number> = {
+  Basique: 2000,
+  Bronze: 5000,
+  Argent: 10000,
+  Gold: 25000,
+  Elite: 50000,
+  Saphir: 100000,
+  Premium: "200000 - 500000",
+  Diamond: "500000 - 1000000",
+  VVIP: ">= 2000000"
+};
+
+/**
+ * Type pour les filtres de période
+ */
+export type PeriodFilter = 'day' | 'week' | 'month' | 'year' | 'all';
+
+/**
+ * Interface pour les statistiques d'export
+ */
+export interface ExportStats {
+  totalMembers: number;
+  totalAmount: number;
+  byCategory: {
+    category: string;
+    count: number;
+    amount: number;
+  }[];
+  startDate: string;
+  endDate: string;
+}
+
 export const printCard = (cardElement: HTMLElement) => {
   const printWindow = window.open('', '', 'height=600,width=800');
   if (!printWindow) return;
@@ -54,8 +91,9 @@ export interface Membre {
   categorie: string;
   poste?: string;
   status?: string;
-  photo_url?: string;
+  photo_url?: string | null;
   created_at?: string;
+  price: number;
 }
 
 export interface User {

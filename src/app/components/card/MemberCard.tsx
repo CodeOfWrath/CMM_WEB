@@ -7,13 +7,13 @@ import { QRCode } from "./QRCode";
 //import logoClub from "@/assets/51ce17fe899d3aa6bdf973ae40de394787f2971f.png";
 
 interface MemberCardProps {
-  imageFile?: File | null;
+  imageFile?: File | null | undefined;
   nom: string;
   prenoms: string;
   categorie: string;
   nb: number;
   supabaseId?: string | null;
-  photo_url?: string;
+  photo_url?: string | null;
 }
 
 export function MemberCard({
@@ -209,7 +209,7 @@ export function MemberCard({
           left: 190,
           right: 90,
           color: "black",
-          fontSize: 12,
+          fontSize: 14,
           fontWeight: "bold",
           textAlign: "center",
           lineHeight: 1.2,

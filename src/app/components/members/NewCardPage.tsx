@@ -20,8 +20,11 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
   const [nom, setNom] = useState("");
   const [prenoms, setPrenoms] = useState("");
   const [categorie, setCategorie] = useState("");
+  const [price, setPrice] = useState("");
   const [supabaseId, setSupabaseId] = useState<string | null>(null);
   const [nbCarte, setNbCarte] = useState(0);
+  const [showExport, setShowExport] = useState(false); // ✅ nouvel état
+
   const cardRef = useRef<HTMLDivElement>(null);
 
   const pickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,7 +47,6 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
 
     let photo_url: string | null = null;
 
-    // Upload image dans Supabase Storage
     if (imageFile) {
       const filePath = `membres/${Date.now()}-${imageFile.name}`;
       try {
@@ -56,7 +58,6 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
       }
     }
 
-    // Insérer le membre et récupérer l’objet inséré
     const { data, error } = await membresService.insert({
       nom,
       prenoms,
@@ -65,6 +66,7 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
       status: "Membre",
       photo_url,
       created_at: new Date().toISOString(),
+      price: Number(price)
     });
 
     if (error || !data) {
@@ -100,7 +102,11 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
           setSelectedCardNumber(cardNum);
           setView("view");
         }}
-        onBack={() => setView("create")}
+        onBack={() => {
+          setView("create");
+          setShowExport(false);
+        }}
+        defaultExport={showExport} // ✅ ouverture automatique du panel export
       />
     );
   }
@@ -145,7 +151,10 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
         </div>
         <div style={{ display: "flex", gap: 10 }}>
           <button
-            onClick={() => setView("list")}
+            onClick={() => {
+              setView("list");
+              setShowExport(false);
+            }}
             style={{
               display: "flex",
               alignItems: "center",
@@ -163,6 +172,30 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
             <Users size={18} />
             Liste des membres
           </button>
+
+          {/* ✅ Bouton Exporter les rapports */}
+          <button
+            onClick={() => {
+              setView("list");
+              setShowExport(true);
+            }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "10px 20px",
+              backgroundColor: "#0f172a",
+              color: "white",
+              border: "none",
+              borderRadius: 8,
+              cursor: "pointer",
+              fontSize: 14,
+              fontWeight: 500,
+            }}
+          >
+            📊 Exporter les rapports
+          </button>
+
           <button
             onClick={onLogout}
             style={{
@@ -185,7 +218,7 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
         </div>
       </div>
 
-      {/* Form + Preview */}
+      {/* Formulaire + Aperçu */}
       <div
         style={{
           maxWidth: 1200,
@@ -214,8 +247,7 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
               gap: 8,
             }}
           >
-            <Plus size={24} />
-            Nouvelle Carte
+            <Plus size={24} /> Nouvelle Carte
           </h2>
 
           {/* Upload image */}
@@ -266,7 +298,7 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
                 padding: "12px 16px",
                 border: "2px solid #e2e8f0",
                 borderRadius: 8,
-                fontSize: 14,
+                fontSize: 15,
                 boxSizing: "border-box",
               }}
             />
@@ -286,38 +318,81 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
                 padding: "12px 16px",
                 border: "2px solid #e2e8f0",
                 borderRadius: 8,
-                fontSize: 14,
+                fontSize: 18,
                 boxSizing: "border-box",
               }}
             />
           </div>
+{/* Catégorie */}
+<div style={{ marginBottom: 20 }}>
+  <label
+    style={{
+      display: "block",
+      marginBottom: 8,
+      color: "#475569",
+      fontSize: 14,
+      fontWeight: 500,
+    }}
+  >
+    Catégorie
+  </label>
+  <select
+    value={categorie}
+    onChange={(e) => setCategorie(e.target.value)}
+    style={{
+      width: "100%",
+      padding: "12px 16px",
+      border: "2px solid #e2e8f0",
+      borderRadius: 8,
+      fontSize: 14,
+      boxSizing: "border-box",
+    }}
+  >
+    <option value="">Sélectionner une catégorie</option>
+    <option value="Basique">Basique</option>
+    <option value="Bronze">Bronze</option>
+    <option value="Argent">Argent</option>
+    <option value="Gold">Gold</option>
+    <option value="Elite">Elite</option>
+    <option value="Saphir">Saphir</option>
+    <option value="Premium">Premium</option>
+    <option value="Diamond">Diamond</option>
+    <option value="VVIP">
+      VVIP
+    </option>
+  </select>
+</div>
 
-          {/* Catégorie */}
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", marginBottom: 8, color: "#475569", fontSize: 14, fontWeight: 500 }}>
-              Catégorie
-            </label>
-            <select
-              value={categorie}
-              onChange={(e) => setCategorie(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "12px 16px",
-                border: "2px solid #e2e8f0",
-                borderRadius: 8,
-                fontSize: 14,
-                boxSizing: "border-box",
-              }}
-            >
-              <option value="">Sélectionner une catégorie</option>
-              <option value="Classique">Classique</option>
-              <option value="Essentielle">Essentielle</option>
-              <option value="Premium">Premium</option>
-              <option value="Elite">Elite</option>
-              <option value="Gold">Gold</option>
-              <option value="Diamond">Diamond</option>
-            </select>
-          </div>
+{/* Champ price si Premium, Diamond ou VVIP */}
+{["Premium", "Diamond", "VVIP"].includes(categorie) && (
+  <div style={{ marginBottom: 20 }}>
+    <label
+      style={{
+        display: "block",
+        marginBottom: 8,
+        color: "#475569",
+        fontSize: 14,
+        fontWeight: 500,
+      }}
+    >
+      Montant (price)
+    </label>
+    <input
+      type="number"
+      value={price}
+      onChange={(e) => setPrice(e.target.value)}
+      placeholder="Entrez la somme"
+      style={{
+        width: "100%",
+        padding: "12px 16px",
+        border: "2px solid #e2e8f0",
+        borderRadius: 8,
+        fontSize: 14,
+        boxSizing: "border-box",
+      }}
+    />
+  </div>
+)}
 
           {/* Actions */}
           <div style={{ display: "flex", gap: 10 }}>
