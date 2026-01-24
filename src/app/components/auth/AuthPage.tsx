@@ -31,7 +31,7 @@ export function AuthPage({ onLogin }: AuthPageProps) {
         if (error) throw error;
         onLogin(data.user);
       } else {
-        const { data, error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({ email, password });
         if (error) throw error;
         setIsLogin(true);
         setPassword("");
