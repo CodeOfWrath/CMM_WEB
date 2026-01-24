@@ -125,8 +125,8 @@ export function MemberCard({
           paddingTop: 0,
         }}
       >
-        <div style={{ fontSize: 18, color: "white", textAlign: "center" }}>
-          CARTE DE MEMBRE N°{nb}
+        <div style={{ fontSize: 15, color: "white", textAlign: "center" }}>
+          CARTE DE MEMBRE PSNSA2026{nb}
         </div>
       </div>
 
@@ -190,7 +190,7 @@ export function MemberCard({
         style={{
           position: "absolute",
           top: 80,
-          right: 100,
+          right: 90,
           color: "white",
           fontSize: 11,
           fontWeight: "bold",
@@ -202,24 +202,26 @@ export function MemberCard({
       </div>
 
       {/* Nom et catégorie */}
-      <div
-        style={{
-          position: "absolute",
-          top: 98,
-          left: 190,
-          right: 90,
-          color: "black",
-          fontSize: 14,
-          fontWeight: "bold",
-          textAlign: "center",
-          lineHeight: 1.2,
-        }}
-      >
-        {nom} {prenoms}
-        <br />
-        <br />
-        {categorie}
-      </div>
+ <div
+  style={{
+    position: "absolute",
+    top: 98,
+    left: 190,
+    right: 90,
+    color: "black",
+    textAlign: "center",
+    lineHeight: 0.8,
+  }}
+>
+  <span style={{ fontSize: 18, fontWeight: "bold" }}>
+    {nom} {prenoms}
+  </span>
+  <br />
+  <br />
+  <span style={{ fontSize: 12, fontWeight: "bold" }}>
+    {categorie}
+  </span>
+</div>
 
       {/* QR Code en bas à gauche */}
      <div

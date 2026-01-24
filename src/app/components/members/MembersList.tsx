@@ -199,7 +199,7 @@ export function MembersList({ onViewCard, onBack, defaultExport = false }: Membe
                       {membre.nom} {membre.prenoms}
                     </h3>
                     <p style={{ margin: "4px 0 0", fontSize: 13, color: "#64748b" }}>
-                      N°{String(filteredMembres.length - index).padStart(4, "0")}
+                      Membre : PSNSA2026{String(filteredMembres.length - index)}
                     </p>
                   </div>
                 </div>

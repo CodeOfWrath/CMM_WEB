@@ -37,7 +37,9 @@ export const authService = {
 
 // ✅ Table "membres"
 export const membresService = {
-  insert: async (data: Omit<Membre, "id" | "price"> & { price?: number }) => {
+  insert: async (
+    data: Omit<Membre, "id" | "price"> & { price?: number }
+  ) => {
     let price = 0;
 
     if (typeof CATEGORY_PRICES[data.categorie] === "number") {
@@ -49,7 +51,14 @@ export const membresService = {
 
     return await supabase
       .from("membres")
-      .insert({ ...data, price })
+      .insert({
+        ...data,
+        price,
+        telephone: data.telephone ?? null,
+        email: data.email ?? null,
+        region: data.region ?? null,
+        ville: data.ville ?? null,
+      })
       .select()
       .single();
   },

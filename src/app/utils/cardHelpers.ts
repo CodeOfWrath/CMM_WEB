@@ -29,10 +29,14 @@ export type PeriodFilter = 'day' | 'week' | 'month' | 'year' | 'all';
 export interface ExportStats {
   totalMembers: number;
   totalAmount: number;
-  byCategory: {
+  categoriesStats: {
     category: string;
     count: number;
-    amount: number;
+    totalAmount: number;
+  }[];
+  regionsStats: {
+    region: string;
+    count: number;
   }[];
   startDate: string;
   endDate: string;
@@ -94,6 +98,11 @@ export interface Membre {
   photo_url?: string | null;
   created_at?: string;
   price: number;
+  telephone?: string | null;
+  email?: string | null;
+  region?: string | null;
+  ville?: string | null;
+
 }
 
 export interface User {

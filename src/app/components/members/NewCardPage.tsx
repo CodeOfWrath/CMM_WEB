@@ -21,6 +21,10 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
   const [prenoms, setPrenoms] = useState("");
   const [categorie, setCategorie] = useState("");
   const [price, setPrice] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [email, setEmail] = useState("");
+  const [region, setRegion] = useState("");
+  const [ville, setVille] = useState("");
   const [supabaseId, setSupabaseId] = useState<string | null>(null);
   const [nbCarte, setNbCarte] = useState(0);
   const [showExport, setShowExport] = useState(false); // ✅ nouvel état
@@ -39,48 +43,57 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
     if (!error && typeof data === "number") setNbCarte(data);
   };
 
-  const submitForm = async () => {
-    if (!nom || !prenoms || !categorie) {
-      alert("Veuillez remplir tous les champs");
+const submitForm = async () => {
+  if (!nom || !prenoms || !categorie) {
+    alert("Veuillez remplir tous les champs obligatoires");
+    return;
+  }
+
+  let photo_url: string | null = null;
+
+  if (imageFile) {
+    const filePath = `membres/${Date.now()}-${imageFile.name}`;
+    try {
+      photo_url = await storageService.uploadImage("membres", filePath, imageFile);
+    } catch (err) {
+      console.error("Erreur upload image:", err);
+      alert("Impossible d'uploader l'image");
       return;
     }
+  }
 
-    let photo_url: string | null = null;
-
-    if (imageFile) {
-      const filePath = `membres/${Date.now()}-${imageFile.name}`;
-      try {
-        photo_url = await storageService.uploadImage("membres", filePath, imageFile);
-      } catch (err) {
-        console.error("Erreur upload image:", err);
-        alert("Impossible d'uploader l'image");
-        return;
-      }
-    }
-
-    const { data, error } = await membresService.insert({
-      nom,
-      prenoms,
-      categorie,
-      poste: "RAS",
-      status: "Membre",
-      photo_url,
-      created_at: new Date().toISOString(),
-      price: Number(price)
-    });
-
-    if (error || !data) {
-      console.error(error);
-      alert("Erreur lors de l'enregistrement");
-      return;
-    }
-
-    const docId = String(data.id);
-    setSupabaseId(docId);
-
-    alert(`Carte enregistrée avec ID: ${docId}`);
-    await getMembersCount();
+  // Préparer l'objet à insérer
+  const payload = {
+    nom,
+    prenoms,
+    categorie,
+    poste: "RAS",
+    status: "Membre",
+    photo_url,
+    created_at: new Date().toISOString(),
+    // Champs optionnels
+    telephone: telephone || null,
+    email: email || null,
+    region: region || null,
+    ville: ville || null,
+    // Prix : seulement si Premium/Diamond/VVIP
+    price: ["Premium", "Diamond", "VVIP"].includes(categorie) ? Number(price) : undefined,
   };
+
+  const { data, error } = await membresService.insert(payload);
+
+  if (error || !data) {
+    console.error(error);
+    alert("Erreur lors de l'enregistrement");
+    return;
+  }
+
+  const docId = String(data.id);
+  setSupabaseId(docId);
+
+  alert(`Carte enregistrée avec ID: ${docId}`);
+  await getMembersCount();
+};
 
   const resetForm = () => {
     setImageFile(null);
@@ -284,45 +297,62 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
             )}
           </div>
 
-          {/* Nom */}
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", marginBottom: 8, color: "#475569", fontSize: 14, fontWeight: 500 }}>
-              Nom
-            </label>
-            <input
-              placeholder="Nom de famille"
-              value={nom}
-              onChange={(e) => setNom(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "12px 16px",
-                border: "2px solid #e2e8f0",
-                borderRadius: 8,
-                fontSize: 15,
-                boxSizing: "border-box",
-              }}
-            />
-          </div>
+        {/* Nom */}
+<div style={{ marginBottom: 20 }}>
+  <label
+    style={{
+      display: "block",
+      marginBottom: 8,
+      color: "#475569",
+      fontSize: 14,
+      fontWeight: 500,
+    }}
+  >
+    Nom
+  </label>
+  <input
+    placeholder="Nom de famille"
+    value={nom}
+    onChange={(e) => setNom(e.target.value)}
+    style={{
+      width: "100%",
+      padding: "12px 16px",
+      border: "2px solid #e2e8f0",
+      borderRadius: 8,
+      fontSize: 15,
+      boxSizing: "border-box",
+    }}
+  />
+</div>
 
-          {/* Prénoms */}
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ display: "block", marginBottom: 8, color: "#475569", fontSize: 14, fontWeight: 500 }}>
-              Prénoms
-            </label>
-            <input
-              placeholder="Prénom(s)"
-              value={prenoms}
-              onChange={(e) => setPrenoms(e.target.value)}
-              style={{
-                width: "100%",
-                padding: "12px 16px",
-                border: "2px solid #e2e8f0",
-                borderRadius: 8,
-                fontSize: 18,
-                boxSizing: "border-box",
-              }}
-            />
-          </div>
+{/* Prénoms */}
+<div style={{ marginBottom: 20 }}>
+  <label
+    style={{
+      display: "block",
+      marginBottom: 8,
+      color: "#475569",
+      fontSize: 14,
+      fontWeight: 500,
+    }}
+  >
+    Prénoms
+  </label>
+  <input
+    placeholder="Prénom(s)"
+    value={prenoms}
+    onChange={(e) => setPrenoms(e.target.value)}
+    style={{
+      width: "100%",
+      padding: "12px 16px",
+      border: "2px solid #e2e8f0",
+      borderRadius: 8,
+      fontSize: 18,
+      boxSizing: "border-box",
+    }}
+  />
+</div>
+
 {/* Catégorie */}
 <div style={{ marginBottom: 20 }}>
   <label
@@ -357,9 +387,7 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
     <option value="Saphir">Saphir</option>
     <option value="Premium">Premium</option>
     <option value="Diamond">Diamond</option>
-    <option value="VVIP">
-      VVIP
-    </option>
+    <option value="VVIP">VVIP</option>
   </select>
 </div>
 
@@ -393,6 +421,132 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
     />
   </div>
 )}
+
+{/* Numéro de téléphone (optionnel) */}
+<div style={{ marginBottom: 20 }}>
+  <label
+    style={{
+      display: "block",
+      marginBottom: 8,
+      color: "#475569",
+      fontSize: 14,
+      fontWeight: 500,
+    }}
+  >
+    Numéro de téléphone (optionnel)
+  </label>
+  <input
+    type="tel"
+    placeholder="Ex: +237 699 00 00 00"
+    value={telephone}
+    onChange={(e) => setTelephone(e.target.value)}
+    style={{
+      width: "100%",
+      padding: "12px 16px",
+      border: "2px solid #e2e8f0",
+      borderRadius: 8,
+      fontSize: 14,
+      boxSizing: "border-box",
+    }}
+  />
+</div>
+
+{/* Adresse mail (optionnel) */}
+<div style={{ marginBottom: 20 }}>
+  <label
+    style={{
+      display: "block",
+      marginBottom: 8,
+      color: "#475569",
+      fontSize: 14,
+      fontWeight: 500,
+    }}
+  >
+    Adresse mail (optionnel)
+  </label>
+  <input
+    type="email"
+    placeholder="exemple@mail.com"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    style={{
+      width: "100%",
+      padding: "12px 16px",
+      border: "2px solid #e2e8f0",
+      borderRadius: 8,
+      fontSize: 14,
+      boxSizing: "border-box",
+    }}
+  />
+</div>
+
+{/* Région */}
+<div style={{ marginBottom: 20 }}>
+  <label
+    style={{
+      display: "block",
+      marginBottom: 8,
+      color: "#475569",
+      fontSize: 14,
+      fontWeight: 500,
+    }}
+  >
+    Région
+  </label>
+  <select
+    value={region}
+    onChange={(e) => setRegion(e.target.value)}
+    style={{
+      width: "100%",
+      padding: "12px 16px",
+      border: "2px solid #e2e8f0",
+      borderRadius: 8,
+      fontSize: 14,
+      boxSizing: "border-box",
+    }}
+  >
+    <option value="">Sélectionner une région</option>
+    <option value="Adamaoua">Adamaoua</option>
+    <option value="Centre">Centre</option>
+    <option value="Est">Est</option>
+    <option value="Extrême-Nord">Extrême-Nord</option>
+    <option value="Littoral">Littoral</option>
+    <option value="Nord">Nord</option>
+    <option value="Nord-Ouest">Nord-Ouest</option>
+    <option value="Ouest">Ouest</option>
+    <option value="Sud">Sud</option>
+    <option value="Sud-Ouest">Sud-Ouest</option>
+  </select>
+</div>
+
+{/* Ville */}
+<div style={{ marginBottom: 20 }}>
+  <label
+    style={{
+      display: "block",
+      marginBottom: 8,
+      color: "#475569",
+      fontSize: 14,
+      fontWeight: 500,
+    }}
+  >
+    Ville
+  </label>
+  <input
+    type="text"
+    placeholder="Entrez la ville"
+    value={ville}
+    onChange={(e) => setVille(e.target.value)}
+    style={{
+      width: "100%",
+      padding: "12px 16px",
+      border: "2px solid #e2e8f0",
+      borderRadius: 8,
+      fontSize: 14,
+      boxSizing: "border-box",
+    }}
+  />
+</div>
 
           {/* Actions */}
           <div style={{ display: "flex", gap: 10 }}>
