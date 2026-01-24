@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Search, Users, Eye } from "lucide-react";
 import type { Membre } from "../../utils/cardHelpers";
 import { supabase } from "../../services/supabase";

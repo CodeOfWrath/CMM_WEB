@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { AuthPage } from "./components/auth/AuthPage";
 import { NewCardPage } from "./components/members/NewCardPage";
 import { supabase } from "./services/supabase";

@@ -3,7 +3,7 @@ import { LogOut, Users, Plus, X, User } from "lucide-react";
 import { MemberCard } from "../card/MemberCard";
 import { MembersList } from "./MembersList";
 import { ViewCardPage } from "./ViewCardPage";
-import { authService, membresService, rpcService, storageService } from "../../services/supabase";
+import { membresService, rpcService, storageService } from "../../services/supabase";
 import type { User as UserType, Membre } from "../../utils/cardHelpers";
 
 interface NewCardPageProps {

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { User } from "lucide-react";
 import { QRCode } from "./QRCode";
 
