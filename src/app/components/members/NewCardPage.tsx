@@ -25,6 +25,7 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
   const [email, setEmail] = useState("");
   const [region, setRegion] = useState("");
   const [ville, setVille] = useState("");
+  const [lafonction, setLafonction] = useState("");
   const [supabaseId, setSupabaseId] = useState<string | null>(null);
   const [nbCarte, setNbCarte] = useState(0);
   const [showExport, setShowExport] = useState(false); // ✅ nouvel état
@@ -76,6 +77,7 @@ const submitForm = async () => {
     email: email || null,
     region: region || null,
     ville: ville || null,
+    lafonction: lafonction || null,
     // Prix : seulement si Premium/Diamond/VVIP
     price: ["Premium", "Diamond", "VVIP"].includes(categorie) ? Number(price) : undefined,
   };
@@ -548,6 +550,35 @@ const submitForm = async () => {
   />
 </div>
 
+{/* Fonction */}
+<div style={{ marginBottom: 20 }}>
+  <label
+    style={{
+      display: "block",
+      marginBottom: 8,
+      color: "#475569",
+      fontSize: 14,
+      fontWeight: 500,
+    }}
+  >
+    Fonction
+  </label>
+  <input
+    type="text"
+    placeholder="Entrez la fonctionnalité"
+    value={lafonction}
+    onChange={(e) => setLafonction(e.target.value)}
+    style={{
+      width: "100%",
+      padding: "12px 16px",
+      border: "2px solid #e2e8f0",
+      borderRadius: 8,
+      fontSize: 14,
+      boxSizing: "border-box",
+    }}
+  />
+</div>
+
           {/* Actions */}
           <div style={{ display: "flex", gap: 10 }}>
             <button
@@ -615,6 +646,7 @@ const submitForm = async () => {
                 categorie={categorie}
                 nb={nbCarte + 1}
                 supabaseId={supabaseId}
+                lafonction={lafonction}
               />
             ) : (
               <div style={{ textAlign: "center", color: "#94a3b8", padding: 40 }}>

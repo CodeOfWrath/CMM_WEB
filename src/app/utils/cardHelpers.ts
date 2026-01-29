@@ -102,6 +102,7 @@ export interface Membre {
   email?: string | null;
   region?: string | null;
   ville?: string | null;
+  lafonction?: string | null;
 
 }
 

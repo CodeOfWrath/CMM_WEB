@@ -112,6 +112,7 @@ export function ViewCardPage({ membre, cardNumber, onBack }: ViewCardPageProps) 
               categorie={membre.categorie}
               nb={cardNumber}
               supabaseId={String(membre.id)}
+              lafonction={membre.lafonction}
             />
           </div>
         </div>

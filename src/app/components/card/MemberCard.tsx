@@ -14,6 +14,7 @@ interface MemberCardProps {
   nb: number;
   supabaseId?: string | null;
   photo_url?: string | null;
+  lafonction?: string | null;
 }
 
 export function MemberCard({
@@ -24,6 +25,7 @@ export function MemberCard({
   nb,
   supabaseId,
   photo_url,
+  lafonction,
 }: MemberCardProps) {
   // ⚡️ Génère une URL stable pour l’image uploadée
   const fileUrl = useMemo(
@@ -135,9 +137,9 @@ export function MemberCard({
         style={{
           position: "absolute",
           top: 98,
-          left: 170,
-          height: 50,
-          width: 193,
+          left: 180,
+          height: 60,
+          width: 210,
           backgroundColor: "rgba(255, 255, 255, 0.6)",
           borderRadius: 22,
         }}
@@ -206,20 +208,24 @@ export function MemberCard({
   style={{
     position: "absolute",
     top: 98,
-    left: 190,
-    right: 90,
+    left: 195,
+    right: 60,
     color: "black",
     textAlign: "center",
     lineHeight: 0.8,
   }}
 >
-  <span style={{ fontSize: 18, fontWeight: "bold" }}>
+  <span style={{ fontSize: 17, fontWeight: "bold" }}>
     {nom} {prenoms}
   </span>
   <br />
   <br />
   <span style={{ fontSize: 12, fontWeight: "bold" }}>
     {categorie}
+  </span>
+  <br />
+  <span style={{ fontSize: 12, fontWeight: "bold" }}>
+    {lafonction}
   </span>
 </div>
 
