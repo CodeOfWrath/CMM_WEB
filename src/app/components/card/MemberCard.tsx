@@ -203,7 +203,7 @@ export function MemberCard({
         Saison Sportive 2025-2026
       </div>
 
-      {/* Nom et catégorie */}
+      {/* Nom, catégorie et lafonction */}
  <div
   style={{
     position: "absolute",
@@ -224,7 +224,7 @@ export function MemberCard({
     {categorie}
   </span>
   <br />
-  <span style={{ fontSize: 12, fontWeight: "bold" }}>
+  <span style={{ fontSize: 10, fontWeight: "bold" }}>
     {lafonction}
   </span>
 </div>
