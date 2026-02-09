@@ -5,6 +5,7 @@ import { MembersList } from "./MembersList";
 import { ViewCardPage } from "./ViewCardPage";
 import { membresService, rpcService, storageService } from "../../services/supabase";
 import type { User as UserType, Membre } from "../../utils/cardHelpers";
+import { EditCardForm } from "./EditCardForm";
 
 interface NewCardPageProps {
   user: UserType;
@@ -31,6 +32,7 @@ export function NewCardPage({ user, onLogout }: NewCardPageProps) {
   const [showExport, setShowExport] = useState(false); // ✅ nouvel état
 
   const cardRef = useRef<HTMLDivElement>(null);
+  const [editing, setEditing] = useState(false);
 
   const pickImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -128,15 +130,27 @@ const submitForm = async () => {
 
   if (view === "view" && selectedMembre && selectedCardNumber) {
     return (
-      <ViewCardPage
-        membre={selectedMembre}
-        cardNumber={selectedCardNumber}
-        onBack={() => {
-          setView("list");
-          setSelectedMembre(null);
-        }}
-      />
-    );
+    <>
+      {editing ? (
+        <EditCardForm
+          membre={selectedMembre}
+          onSave={(updated) => {
+            setSelectedMembre(updated);
+            console.log("Membre modifié :", updated);
+            setEditing(false);
+          }}
+          onCancel={() => setEditing(false)}
+        />
+      ) : (
+        <ViewCardPage
+          membre={selectedMembre}
+          cardNumber={selectedCardNumber}
+          onBack={() => { setView("list"); setSelectedMembre(null); } } 
+          onEdit={() => setEditing(true)}
+        />
+      )}
+    </>
+  );
   }
 
   return (
@@ -299,7 +313,7 @@ const submitForm = async () => {
             )}
           </div>
 
-        {/* Nom */}
+       {/* Civilité + Nom */}
 <div style={{ marginBottom: 20 }}>
   <label
     style={{
@@ -310,21 +324,55 @@ const submitForm = async () => {
       fontWeight: 500,
     }}
   >
-    Nom
+    Civilité et Nom
   </label>
-  <input
-    placeholder="Nom de famille"
-    value={nom}
-    onChange={(e) => setNom(e.target.value)}
-    style={{
-      width: "100%",
-      padding: "12px 16px",
-      border: "2px solid #e2e8f0",
-      borderRadius: 8,
-      fontSize: 15,
-      boxSizing: "border-box",
-    }}
-  />
+
+  <div style={{ display: "flex", gap: 10 }}>
+    {/* Select Civilité */}
+    <select
+      onChange={(e) => {
+        const civ = e.target.value;
+        // On remplace la civilité au début du nom
+        const parts = nom.split(" ");
+        const currentName = parts.slice(1).join(" "); // enlève l’ancienne civilité
+        setNom(`${civ} ${currentName}`.trim());
+      }}
+      style={{
+        padding: "12px 16px",
+        border: "2px solid #e2e8f0",
+        borderRadius: 8,
+        fontSize: 15,
+        boxSizing: "border-box",
+      }}
+    >
+      <option value="">-- Civilité --</option>
+      <option value="M.">M.</option>
+      <option value="Mme">Mme</option>
+      <option value="Mlle">Mlle</option>
+      <option value="Me">Me</option>
+      <option value="Pr">Pr</option>
+      <option value="Dr">Dr</option>
+      <option value="Rm">Rm</option>
+    </select>
+
+    {/* Champ Nom */}
+    <input
+      placeholder="Nom de famille"
+      value={nom.split(" ").slice(1).join(" ")} // affiche uniquement le nom sans la civilité
+      onChange={(e) => {
+        const civ = nom.split(" ")[0] || "";
+        setNom(`${civ} ${e.target.value}`.trim());
+      }}
+      style={{
+        flex: 1,
+        padding: "12px 16px",
+        border: "2px solid #e2e8f0",
+        borderRadius: 8,
+        fontSize: 15,
+        boxSizing: "border-box",
+      }}
+    />
+  </div>
 </div>
 
 {/* Prénoms */}

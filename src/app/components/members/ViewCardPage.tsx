@@ -1,16 +1,21 @@
 import React, { useRef } from "react";
-import { Download, Printer } from "lucide-react";
+import { Download, Printer, Edit } from "lucide-react";
 import { MemberCard } from "../card/MemberCard";
 import { printCard, downloadCard } from "../../utils/cardHelpers";
 import type { Membre } from "../../utils/cardHelpers";
 
-interface ViewCardPageProps {
+
+export function ViewCardPage({
+  membre,
+  cardNumber,
+  onBack,
+  onEdit,
+}: {
   membre: Membre;
   cardNumber: number;
   onBack: () => void;
-}
-
-export function ViewCardPage({ membre, cardNumber, onBack }: ViewCardPageProps) {
+  onEdit: () => void;
+}) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   const handleDownload = () => {
@@ -66,8 +71,6 @@ export function ViewCardPage({ membre, cardNumber, onBack }: ViewCardPageProps) 
             <button
               onClick={handleDownload}
               style={{ ...buttonStyle, backgroundColor: "green" }}
-              aria-label="Télécharger la carte"
-              title="Télécharger la carte"
             >
               <Download size={18} />
               Télécharger
@@ -75,17 +78,20 @@ export function ViewCardPage({ membre, cardNumber, onBack }: ViewCardPageProps) 
             <button
               onClick={handlePrint}
               style={{ ...buttonStyle, backgroundColor: "#3b82f6" }}
-              aria-label="Imprimer la carte"
-              title="Imprimer la carte"
             >
               <Printer size={18} />
               Imprimer
             </button>
             <button
+              onClick={onEdit}
+              style={{ ...buttonStyle, backgroundColor: "#f59e0b" }}
+            >
+              <Edit size={18} />
+              Modifier
+            </button>
+            <button
               onClick={onBack}
               style={{ ...buttonStyle, backgroundColor: "#64748b" }}
-              aria-label="Retour"
-              title="Retour"
             >
               Retour
             </button>

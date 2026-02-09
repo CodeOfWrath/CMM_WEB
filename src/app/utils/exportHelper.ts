@@ -126,8 +126,15 @@ export const exportRapportToPDF = (
   doc.setFontSize(18);
   doc.text("RAPPORT DES MEMBRES", 105, 15, { align: "center" });
 
-  doc.setFontSize(12);
-  doc.text(`Période: ${period}`, 105, 25, { align: "center" });
+doc.setFontSize(12);
+
+let periodLabel = period;
+if (period === "month") {
+  const mois = new Date().toLocaleString("fr-FR", { month: "long" });
+  periodLabel = `Mois de ${mois}`;
+}
+
+doc.text(`Période: ${periodLabel}`, 105, 25, { align: "center" });
 
   // Statistiques globales
   doc.setFontSize(14);
@@ -186,6 +193,7 @@ export const exportRapportToPDF = (
   doc.text("Nom", 25, y);
   doc.text("Prénoms", 60, y);
   doc.text("Catégorie", 100, y);
+  doc.text("Montant Contribué", 170, y);
   doc.text("Région", 125, y);
   doc.text("Ville", 150, y);
   doc.text("Téléphone", 170, y);
@@ -197,6 +205,7 @@ export const exportRapportToPDF = (
     doc.text(m.nom, 25, y);
     doc.text(m.prenoms, 60, y);
     doc.text(m.categorie, 100, y);
+    doc.text(m.price.toString(), 170, y);
     doc.text(m.region || "", 125, y);
     doc.text(m.ville || "", 150, y);
     doc.text(m.telephone || "", 170, y);

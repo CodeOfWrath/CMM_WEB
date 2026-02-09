@@ -62,6 +62,23 @@ export const membresService = {
       .select()
       .single();
   },
+  
+  // ✅ Nouvelle méthode update
+  update: async (id: string, data: Partial<Membre>) => {
+    return await supabase
+      .from("membres")
+      .update({
+        ...data,
+        telephone: data.telephone ?? null,
+        email: data.email ?? null,
+        region: data.region ?? null,
+        ville: data.ville ?? null,
+      })
+      .eq("id", id)
+      .select()
+      .single();
+  },
+
 
   selectLast: async () => {
     const { data, error } = await supabase
