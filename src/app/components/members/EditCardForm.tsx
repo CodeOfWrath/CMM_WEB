@@ -91,10 +91,10 @@ export function EditCardForm({ membre, onSave, onCancel }: EditCardFormProps) {
     <div style={{ display: "flex", gap: 10 }}>
         {/* Select Civilité */}
         <select
+        value={formData.nom.split(" ")[0] || ""}
         onChange={(e) => {
             const civ = e.target.value;
-            const parts = formData.nom.split(" ");
-            const currentName = parts.slice(1).join(" "); // enlève l’ancienne civilité
+            const currentName = formData.nom.split(" ").slice(1).join(" ");
             setFormData((prev) => ({ ...prev, nom: civ ? `${civ} ${currentName}`.trim() : currentName }));
         }}
         style={{
@@ -102,7 +102,6 @@ export function EditCardForm({ membre, onSave, onCancel }: EditCardFormProps) {
             border: "2px solid #e2e8f0",
             borderRadius: 8,
             fontSize: 15,
-            boxSizing: "border-box",
         }}
         >
         <option value="">-- Civilité --</option>
@@ -118,16 +117,13 @@ export function EditCardForm({ membre, onSave, onCancel }: EditCardFormProps) {
         {/* Champ Nom */}
         <input
         placeholder="Nom de famille"
-        value={
-            formData.nom.includes(" ")
-            ? formData.nom.split(" ").slice(1).join(" ") // affiche sans la civilité
-            : formData.nom // si pas de civilité, affiche juste le nom
-        }
+        value={formData.nom.split(" ").slice(1).join(" ") || formData.nom}
         onChange={(e) => {
             const civ = formData.nom.split(" ")[0] || "";
+            const newName = e.target.value;
             setFormData((prev) => ({
             ...prev,
-            nom: civ ? `${civ} ${e.target.value}`.trim() : e.target.value,
+            nom: civ ? `${civ} ${newName}`.trim() : newName,
             }));
         }}
         style={{
@@ -136,7 +132,6 @@ export function EditCardForm({ membre, onSave, onCancel }: EditCardFormProps) {
             border: "2px solid #e2e8f0",
             borderRadius: 8,
             fontSize: 15,
-            boxSizing: "border-box",
         }}
         />
     </div>
